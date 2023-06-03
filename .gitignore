@@ -1,3 +1,6 @@
+#Exlude DB Folder from Git Upload
+db/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
