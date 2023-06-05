@@ -1,7 +1,8 @@
 import logging
 
 class MyFormatter(logging.Formatter):
-    format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    #format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    format = "%(message)s"
 
     FORMATS = {
         logging.DEBUG: "\033[0;37m" + format + "\033[0m",

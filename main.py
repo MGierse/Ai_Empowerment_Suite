@@ -9,8 +9,10 @@ import Dataloader as dl
 import DataAnalysis as dA
 from QuickMove import parsing_calcConveyor
 from LLM_Interface import getKUKA_LLM
+from LLM_Interface import getMP_LLM
 from ScrapeMe import ScrapeMe
 from PDF2Chat import PDF2Chat_Run
+from collections import deque
 
 #Vector Storage
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -19,6 +21,7 @@ from Custom_Chroma import My_Chroma
 
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import RetrievalQA
+from langchain.chains import qa_with_sources
 import langchain.schema
 
 #Tool Interface
@@ -30,6 +33,7 @@ from langchain.chains import LLMMathChain
 
 #Agent Interface
 from langchain.agents import initialize_agent, AgentType
+import tiktoken
 
 #Load Environment Variables
 load_dotenv()
@@ -38,6 +42,7 @@ load_dotenv()
 logger = logging.getLogger('ConsoleInterface')
 
 #Generally required
+#llm = getKUKA_LLM()
 llm = getKUKA_LLM()
 
 embeddings = OpenAIEmbeddings()
@@ -245,7 +250,8 @@ def SearchMyVectorstore():
     content = ""
     vectorstore = LoadVectorStore()
     query=input("Search: ")
-    k = input("No of Documents to retrieve: ") 
+    k = input("No of Documents to retrieve: ")
+    ModelTokenLimit: int = 4096
 
     question = input("Question: ")
     texts = vectorstore.similarity_search(query, k=int(k))
@@ -254,15 +260,78 @@ def SearchMyVectorstore():
         #print(text)
         content+=text.page_content
 
+    # Import the tiktoken package and create a length function
+    tokenizer = tiktoken.get_encoding("cl100k_base")
+    TokenCount = tokenizer.get_encoding(content)
+
     #print(llm("Answer the following question: " + question + " Taking into account the context and information in the following documents: " + str(content)))
 
-    QueryContent = langchain.schema.BaseMessage()
+    # Set up the chatbot with a custom template, memory, and question-answering chain
+    template = """You are a chatbot having a conversation with a human.
 
-    QueryContent.content = content
+    Given the following extracted parts of a long document and a question, create a final answer.
+
+    {context}
+
+    {chat_history}
+    Human: {human_input}
+    Chatbot:"""
+
+    prompt = PromptTemplate(
+        input_variables=["chat_history", "human_input", "context"], 
+        template=template
+    )
+    memory = ConversationBufferMemory(memory_key="chat_history", input_key="human_input")
+    chain = qa_with_sources(llm, chain_type="stuff", memory=memory, prompt=prompt)
+    chain()
 
 
-    llm(QueryContent)
+    
               
+def test():
+    
+    memory = deque(maxlen=5)  # Maximale Anzahl von Einträgen im Memory festlegen
+
+    # Import the tiktoken package and create a length function
+    tokenizer = tiktoken.get_encoding("cl100k_base")
+    
+    system_msg = input("What type of chatbot would you like to create? ") #Primer
+    memory.append({"role": "system", "content": system_msg})
+
+    while True:
+        query = input("Enter your query: ")
+        memory.append({"role": "user", "content": query})
+        history = list(memory)  # Gesamtes Memory als Liste für die Anfrage zusammensetzen
+
+        # Gesamt-Tokenlänge berechnen
+        total_tokens = sum(len(tokenizer.encode(" ".join(message["content"].split()), allowed_special=tokenizer.special_tokens_set)) for message in history)
+        max_tokens = 250  # Maximal erlaubte Token-Länge des Modells
+        
+        # Check if the total token length exceeds the limit
+        if total_tokens > max_tokens:
+            clear_memory = input("The total message length exceeds the model's limit. Do you want to clear the memory to provide extra capacity? (y/n): ")
+            if clear_memory.lower() == "y":
+                print("Clearing memory.")
+                memory.clear()  # Clear the memory
+            else:
+                print("Memory will not be cleared.")
+                print("Printing history for reference.")
+                print(history)
+                print("Exiting.")
+                break
+                
+            continue
+
+        llm = getMP_LLM(history=history)
+        
+        reply = llm.choices[0].message.content.strip()
+        memory.append({"role": "assistant", "content": reply})
+
+        logger.info("\n" +"Ai: "+ reply + "\n")
+
+
+   
+
 
 if __name__ == "__main__":
     def display_menu():
@@ -273,12 +342,13 @@ if __name__ == "__main__":
         print("4. ScrapeMe!")
         print("5. PDF2Chat")
         print("6. Search My Vectorstore")
+        print("7. Test")
         print("0. Exit")
 
     # Main Menu
     while True:
         display_menu()
-        choice = input("Select an option: ")
+        choice = input("\n"+"Select an option: ")
 
         if choice == "1":
             CreateVectorStore()
@@ -291,8 +361,10 @@ if __name__ == "__main__":
             ScrapeMe(base_url=base_url, url=base_url)
         elif choice == "5":
             PDF2Chat_Run()
-        elif choice == "6":
+        elif choice == "6":    
             SearchMyVectorstore()
+        elif choice == "7":
+            test()
         elif choice == "0":
             break
         else:           
