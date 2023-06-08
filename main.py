@@ -245,93 +245,8 @@ def RunQuery(agent):
 
                 print("\n\nAnswer: ", answer)
 
-def SearchMyVectorstore():
 
-    content = ""
-    vectorstore = LoadVectorStore()
-    query=input("Search: ")
-    k = input("No of Documents to retrieve: ")
-    ModelTokenLimit: int = 4096
-
-    question = input("Question: ")
-    texts = vectorstore.similarity_search(query, k=int(k))
-    
-    for text in texts:
-        #print(text)
-        content+=text.page_content
-
-    # Import the tiktoken package and create a length function
-    tokenizer = tiktoken.get_encoding("cl100k_base")
-    TokenCount = tokenizer.get_encoding(content)
-
-    #print(llm("Answer the following question: " + question + " Taking into account the context and information in the following documents: " + str(content)))
-
-    # Set up the chatbot with a custom template, memory, and question-answering chain
-    template = """You are a chatbot having a conversation with a human.
-
-    Given the following extracted parts of a long document and a question, create a final answer.
-
-    {context}
-
-    {chat_history}
-    Human: {human_input}
-    Chatbot:"""
-
-    prompt = PromptTemplate(
-        input_variables=["chat_history", "human_input", "context"], 
-        template=template
-    )
-    memory = ConversationBufferMemory(memory_key="chat_history", input_key="human_input")
-    chain = qa_with_sources(llm, chain_type="stuff", memory=memory, prompt=prompt)
-    chain()
-
-
-    
-              
-def test():
-    
-    memory = deque(maxlen=5)  # Maximale Anzahl von Einträgen im Memory festlegen
-
-    # Import the tiktoken package and create a length function
-    tokenizer = tiktoken.get_encoding("cl100k_base")
-    
-    system_msg = input("What type of chatbot would you like to create? ") #Primer
-    memory.append({"role": "system", "content": system_msg})
-
-    while True:
-        query = input("Enter your query: ")
-        memory.append({"role": "user", "content": query})
-        history = list(memory)  # Gesamtes Memory als Liste für die Anfrage zusammensetzen
-
-        # Gesamt-Tokenlänge berechnen
-        total_tokens = sum(len(tokenizer.encode(" ".join(message["content"].split()), allowed_special=tokenizer.special_tokens_set)) for message in history)
-        max_tokens = 250  # Maximal erlaubte Token-Länge des Modells
         
-        # Check if the total token length exceeds the limit
-        if total_tokens > max_tokens:
-            clear_memory = input("The total message length exceeds the model's limit. Do you want to clear the memory to provide extra capacity? (y/n): ")
-            if clear_memory.lower() == "y":
-                print("Clearing memory.")
-                memory.clear()  # Clear the memory
-            else:
-                print("Memory will not be cleared.")
-                print("Printing history for reference.")
-                print(history)
-                print("Exiting.")
-                break
-                
-            continue
-
-        llm = getMP_LLM(history=history)
-        
-        reply = llm.choices[0].message.content.strip()
-        memory.append({"role": "assistant", "content": reply})
-
-        logger.info("\n" +"Ai: "+ reply + "\n")
-
-
-   
-
 
 if __name__ == "__main__":
     def display_menu():
@@ -362,9 +277,9 @@ if __name__ == "__main__":
         elif choice == "5":
             PDF2Chat_Run()
         elif choice == "6":    
-            SearchMyVectorstore()
+            None
         elif choice == "7":
-            test()
+            None
         elif choice == "0":
             break
         else:           
