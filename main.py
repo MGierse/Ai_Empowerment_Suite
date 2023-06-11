@@ -68,7 +68,7 @@ logo = r"""
   NEURAL NET-BASED ARTIFICIAL INTELLIGENCE        
      C Y B E R D Y N E - S Y S T E M S
 """
-
+print.test
 logger.info(logo)
 
 def LoadVectorStore():
