@@ -5,21 +5,21 @@ import logging
 import ConsoleInterface
 
 #Import external modules
-import Dataloader as dl
+import Modules.Dataloader as dl
 import DataAnalysis as dA
 from QuickMove import parsing_calcConveyor
-from LLM_Interface import getKUKA_LLM
-from LLM_Interface import getMP_LLM
+from Modules.LLM import getKUKA_LLM
+from Modules.LLM import getMP_LLM
 from ScrapeMe import ScrapeMe
 from PDF2Chat import PDF2Chat_Run
-from collections import deque
+
 
 #Vector Storage
-from langchain.embeddings.openai import OpenAIEmbeddings
+from Modules.Embeddings import AzureOpenAIEmbeddings
 from langchain.vectorstores.chroma import Chroma
 from Custom_Chroma import My_Chroma
 
-from langchain.memory import ConversationBufferMemory
+from Modules.Memory import ConversationBufferMemory
 from langchain.chains import RetrievalQA
 from langchain.chains import qa_with_sources
 import langchain.schema
@@ -45,8 +45,7 @@ logger = logging.getLogger('ConsoleInterface')
 #llm = getKUKA_LLM()
 llm = getKUKA_LLM()
 
-embeddings = OpenAIEmbeddings()
-embeddings.deployment = "kuka-text-embedding-ada-002"
+embeddings = AzureOpenAIEmbeddings(deployment_name="kuka-text-embedding-ada-002")
 
 persist_directory = "db"
 vectorstore = None
@@ -206,7 +205,7 @@ def GetAgent(vectorstore):
             )
     ]
 
-    memory = ConversationBufferMemory(memory_key="chat_history")
+    memory = ConversationBufferMemory("chat_history")
     agent = initialize_agent(tools, llm,verbose=True, agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION, memory=memory)
 
     logger.info("Agent initialized successfully!\n")
@@ -242,8 +241,8 @@ def RunQuery(agent):
                 answer = message.split('`')[1]
 
                 logger.warning("\nError occured in retrieving answer from language model. Please check your query and try again. Answer stored in error message will be printed:\n")
+                logger.warning("\nAnswer: ", answer)
 
-                print("\n\nAnswer: ", answer)
 
 
         
@@ -251,9 +250,9 @@ def RunQuery(agent):
 if __name__ == "__main__":
     def display_menu():
         print("Menu:")
-        print("1. Run query against text based data (Agent+tools)")
+        print("1. Create Vectorstore and run agent (optional)")
         print("2. Run data analysis against Excel data(PandasAgent)")
-        print("3. Load existing Knowledge base to query")
+        print("3. Load existing Vectorstore to query")
         print("4. ScrapeMe!")
         print("5. PDF2Chat")
         print("6. Search My Vectorstore")
