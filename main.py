@@ -123,7 +123,7 @@ def CreateVectorStore():
         print(f"Progress: {progress:.2f}% completed", end='\r')
         
         # Pause einlegen, nachdem jede Anfrage ausgeführt wurde
-        time.sleep(pause_time)
+        #time.sleep(pause_time)
 
     logger.info("Data embedded successfully!\n")
 
