@@ -58,7 +58,9 @@ def LoadPDF(file_path):
     return words
 
 #Create Embeddings according to the chunk size specified for selected filetype
-def GetEmbeddingData(words_all, chunk_size=500):
+def GetEmbeddingData(chunkSize: int):
+
+    words_all = LoadFiles()
 
     chunks = []
     chunk = []
@@ -69,7 +71,7 @@ def GetEmbeddingData(words_all, chunk_size=500):
 
     for word in words_all:
         word_token_count = len(tokenizer.encode(word))
-        if chunk_token_count + word_token_count > chunk_size:
+        if chunk_token_count + word_token_count > chunkSize:
             # Join the current chunk into a string and add it to the chunks list
             chunks.append(' '.join(chunk))
             # Start a new chunk with the current word
@@ -84,9 +86,9 @@ def GetEmbeddingData(words_all, chunk_size=500):
     if chunk:
         chunks.append(' '.join(chunk))
 
-    batches = [' '.join(words_all[i:i+chunk_size]) for i in range(0, len(words_all), chunk_size)]
+    EmbeddingData = [' '.join(words_all[i:i+chunkSize]) for i in range(0, len(words_all), chunkSize)]
 
     # while len(batches) < 4: #equals k parameter in query of openAI api
     #     batches.append("")
 
-    return batches
+    return EmbeddingData
