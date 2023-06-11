@@ -7,7 +7,7 @@ window by including as much pertinent information as possible in the prompt, alo
 
 Current Challenges:
 
--   A notable issue is that the Conversation Memory, which should ideally store the conversation history, and the extracted facts from documents,
+-   A notable issue is that the Conversation Memory, which should ideally store the conversation message, and the extracted facts from documents,
     which should be utilized for context generation, are currently cohabiting the same memory space. This configuration creates a complex problem
     where prior questions are answered repeatedly with each subsequent user query, resulting in a non-linear and confusing conversation flow.
 
@@ -22,7 +22,7 @@ import logging
 import ConsoleInterface
 
 from main import LoadVectorStore
-from LLM_Interface import getMP_LLM
+from Modules.LLM import getMP_LLM
 from collections import deque
 import tiktoken
 
@@ -59,14 +59,14 @@ def prepareLLM_Context(query, vectorstore, QtyDocsToReturn, memory, total_tokens
     combinedQuery = query + content
 
     memory.append({"role": "user", "content": combinedQuery})
-    history = list(memory)  # Gesamtes Memory als Liste für die Anfrage zusammensetzen
+    message = list(memory)  # Gesamtes Memory als Liste für die Anfrage zusammensetzen
 
     for word in combinedQuery.split():
         total_tokens += len(tokenizer.encode(word))
 
 
 
-    return history, total_tokens
+    return message, total_tokens
 
 
 def MaxContextModel():
@@ -95,7 +95,7 @@ def MaxContextModel():
             total_tokens = 0
 
             context_memory.append({"role": "system", "content": system_msg})
-            history, total_tokens = prepareLLM_Context(query, vectorstore, QtyDocsToReturn, context_memory, total_tokens)
+            message, total_tokens = prepareLLM_Context(query, vectorstore, QtyDocsToReturn, context_memory, total_tokens)
             continue
         else:
             if QtyDocsToReturn > 1 and foundDocQty == False:
@@ -104,26 +104,26 @@ def MaxContextModel():
                 total_tokens = 0
                 foundDocQty = True
                 #context_memory.clear()
-                #history.clear()
+                #message.clear()
                 #del context_memory[-1]
             
             
-        history, total_tokens = prepareLLM_Context(query, vectorstore, QtyDocsToReturn, context_memory, total_tokens)
+        message, total_tokens = prepareLLM_Context(query, vectorstore, QtyDocsToReturn, context_memory, total_tokens)
 
         
 
         
-        llm = getMP_LLM(history=history)
+        llm = getMP_LLM(message=message)
 
         reply = llm.choices[0].message.content.strip()
         # Die Antwort des Modells wird auch dem Konversations-Memory hinzugefügt.
         #conversation_memory.append({"role": "user", "content": query})
         context_memory.append({"role": "assistant", "content": reply})
-        #conversation_memory.append(history)
+        #conversation_memory.append(message)
         
         logger.info("\n" + "Ai: " + reply + "\n")
         #return conversation_memory    
-        #history = list(conversation_memory)
+        #message = list(conversation_memory)
 
         # to_delete = {"role": "system", "content": system_msg}  # Das Element, das Sie löschen möchten
 

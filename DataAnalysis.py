@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import pandas as pd
 import tkinter as tk
 from tkinter import filedialog
-from LLM_Interface import getKUKA_LLM
+from Modules.LLM import getKUKA_LLM
 
 #Import API Keys
 load_dotenv()

@@ -11,7 +11,7 @@ def LoadFiles():
     root = tk.Tk()
     root.withdraw()
 
-    filetypes = [("Text files", "*.txt;*.pdf;*.docx"), ("PDF files", "*.pdf"), ("Word files", "*.docx"), ("Text files", "*.txt")]
+    filetypes = [("Text files", "*.txt;*.pdf;*.docx"), ("PDF files", "*.pdf"), ("Excel files", "*.xlsx"), ("Word files", "*.docx"), ("Text files", "*.txt")]
 
     file_paths = filedialog.askopenfilenames(filetypes=filetypes)
 
@@ -28,6 +28,8 @@ def LoadFiles():
             words = text.split()
         elif ext == '.pdf':
             words = LoadPDF(file_path)
+        elif ext == '.xlsx':
+            return file_path #For Excel based data only the respective file path is being returned to be processed in datafram or similar afterwards
         else:
             print(f'Unsupported file type: {ext}')
             continue

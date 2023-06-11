@@ -8,7 +8,7 @@ from langchain.chains import RetrievalQAWithSourcesChain
 #from main import display_menu
 from dotenv import load_dotenv
 
-from LLM_Interface import getKUKA_LLM
+from Modules.LLM import getKUKA_LLM
 import logging
 import ConsoleInterface
 

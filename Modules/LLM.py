@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 import os
 from langchain.chat_models import AzureChatOpenAI #(Private Azure Acces)
-
 import openai
 
 load_dotenv()
@@ -18,7 +17,7 @@ def getKUKA_LLM():
     )
     return llm
 
-def getMP_LLM(history): #Multi Purpose LLM on Azure (CHATGPT)
+def getMP_LLM(message): #Multi Purpose LLM on Azure (CHATGPT)
 
     openai.api_type = "azure"
     openai.api_base = "https://kuka-openai-playground.openai.azure.com/"
@@ -27,7 +26,7 @@ def getMP_LLM(history): #Multi Purpose LLM on Azure (CHATGPT)
 
     llm = openai.ChatCompletion.create(
         engine="kuka-gpt-35-turbo-v0301",
-        messages = history,
+        messages = message,
         temperature=0.7,
         max_tokens=800,
         top_p=0.95,
