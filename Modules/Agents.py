@@ -2,7 +2,7 @@ import logging
 import ConsoleInterface
 
 import langchain.schema
-from langchain.agents import create_pandas_dataframe_agent
+from langchain.agents import initialize_agent, create_pandas_dataframe_agent, AgentType
 
 logger = logging.getLogger('ConsoleInterface')
 
@@ -10,9 +10,13 @@ def PandasDataframeAgent(llm, Dataframe):
     PandasDataframeAgent = create_pandas_dataframe_agent(llm, df=Dataframe, verbose=True)
 
     return PandasDataframeAgent
-
-def RunAgent(Agent):
     
+def RunConversationalAgent(llm, Tools, Memory):
+
+    initialize_agent
+    Agent = initialize_agent(agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION, llm=llm, tools=Tools, memory=Memory, verbose=True)
+    logger.info("Agent initialized successfully!\n")
+
     while True:
         query = input("Enter your query: ")
         if query.lower() == "exit" or query.lower() == "quit":

@@ -3,10 +3,12 @@ import os
 from langchain.chat_models import AzureChatOpenAI #(Private Azure Acces)
 import openai
 
-load_dotenv()
+
 
 def getKUKA_LLM():
-    
+
+    load_dotenv()
+
     llm = AzureChatOpenAI (
         openai_api_base=os.getenv("OPENAI_API_BASE_AZURE"),
         openai_api_version="2023-03-15-preview",
@@ -18,6 +20,8 @@ def getKUKA_LLM():
     return llm
 
 def getMP_LLM(message): #Multi Purpose LLM on Azure (CHATGPT)
+
+    load_dotenv()
 
     openai.api_type = "azure"
     openai.api_base = "https://kuka-openai-playground.openai.azure.com/"
