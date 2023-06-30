@@ -9,7 +9,7 @@ from Modules.Vectorstore import LoadVectorstore
 from QuickMove import parsing_calcConveyor
 
 def create_knowledge_base_tool(llm, **kwargs):
-    vectorstore = LoadVectorstore()
+    vectorstore = kwargs.get('vectorstore')
     qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff",

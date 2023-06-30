@@ -4,36 +4,26 @@ import time
 import logging
 import ConsoleInterface
 
-
 #Import external modules
-import Modules.Dataloader as dl
+from Modules.Tools import GetTools
 import DataAnalysis as dA
+from Modules.Agents import RunConversationalAgent
 
-
+from Modules.Memory import getConversationBufferMemory
+from Modules.Vectorstore import LoadVectorstore
 
 from Modules.LLM import getKUKA_LLM
 from Modules.LLM import getMP_LLM
 from ScrapeMe import ScrapeMe
 from PDF2Chat import PDF2Chat_Run
 
-
 #Vector Storage
 from Modules.Embeddings import AzureOpenAIEmbeddings
 from Modules.Vectorstore import CreateVectorstore
 
-
-
-
-#Init Console
+#Init Console & Welcome Screen
 logger = logging.getLogger('ConsoleInterface')
-
-#Generally required
-llm = getKUKA_LLM()
-
-embeddings = AzureOpenAIEmbeddings(deployment_name="kuka-text-embedding-ada-002")
-
 logger.info("\n\n--- Welcome to SWISSLOG Ai-Empowerment-Suite v1.0.0 ---\n")
-
 logo = r"""
 
                       ▄
@@ -49,8 +39,17 @@ logo = r"""
   NEURAL NET-BASED ARTIFICIAL INTELLIGENCE        
      C Y B E R D Y N E - S Y S T E M S
 """
-
 logger.info(logo)
+
+#Generally required
+embeddings = AzureOpenAIEmbeddings(deployment_name="kuka-text-embedding-ada-002")
+
+def FirstModularTest ():
+    llm = getKUKA_LLM()
+    vectorstore = LoadVectorstore(embeddings=embeddings)    
+    memory = getConversationBufferMemory(memory_key="chat_history")
+    Tools = GetTools(selected_tool_names=['Knowledge Base'], llm=llm, vectorstore=vectorstore)
+    RunConversationalAgent(llm=llm, Tools=Tools, Memory=memory)
 
 if __name__ == "__main__":
 
@@ -76,7 +75,7 @@ if __name__ == "__main__":
         elif choice == "2":
             dA.RunExcelQuery()
         elif choice == "3":
-            None
+            FirstModularTest()
             #LoadVectorStore()
         elif choice == "4":
             base_url = input("Provide Base URL to scrape from!: ")

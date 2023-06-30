@@ -1,4 +1,5 @@
 from langchain.memory import ConversationBufferMemory
 
-def ConversationBufferMemory(memory_key):
-    ConversationBufferMemory(memory_key=memory_key)
+def getConversationBufferMemory(memory_key):
+    memory = ConversationBufferMemory(memory_key=memory_key)
+    return memory

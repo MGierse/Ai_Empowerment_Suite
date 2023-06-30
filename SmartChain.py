@@ -1,5 +1,5 @@
 """
-Die Smart Chain soll die besten Konzepte von Langchain miteinader kombinieren um die höchstmögliche Qualität bei einer Frage und Antwort Aufgabe erzielen.
+Die Smart Chain soll die besten Konzepte von Langchain miteinander kombinieren um die höchstmögliche Qualität bei einer Frage und Antwort Aufgabe erzielen.
 Als Grundlage dienen dazu eigene Dokumente welche zuvor in Vectordatenbanken nach Themengebiet persistent gespeichert wurden.
 Nachfolgen eine Auflistung der zu verwendenden Module aus Langchain für jeden Aspekt der Kette.
 
