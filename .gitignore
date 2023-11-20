@@ -4,6 +4,7 @@ langchain/
 
 #DataBaseIDs
 DataBaseIDs.txt
+DataBaseIDs2.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

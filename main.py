@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     def display_menu():
         print("Menu:")
-        print("1. Create Vectorstore and run agent (optional)")
+        print("1. Create Vectorstore from file")
         print("2. Run data analysis against Excel data(PandasAgent)")
         print("3. Load existing Vectorstore to query")
         print("4. ScrapeMe!")
