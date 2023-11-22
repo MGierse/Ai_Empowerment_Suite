@@ -15,7 +15,13 @@ llm = getKUKA_LLM()
 
 #LoadXLSX() Data in Pandas Dataframe
 def LoadExcel():
-    # Open file dialog to select a xlsx file
+    """
+    Loads an Excel file and creates a pandas DataFrame agent.
+
+    Returns:
+        agent (pandas DataFrame): The pandas DataFrame agent created from the loaded Excel file.
+    """
+    # Open file dialog to select an xlsx file
     root = tk.Tk()
     root.withdraw()
     file_path = filedialog.askopenfilename(filetypes=[("Excel", "*.xlsx")])
@@ -29,6 +35,17 @@ def LoadExcel():
     return agent
 
 def RunExcelQuery():
+    """
+    Runs an Excel query using the agent loaded from LoadExcel().
+    The user can enter queries until they type 'exit' or 'quit'.
+    Prints the answer obtained from the agent.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     agent = LoadExcel()
     while True:
         query = input("Enter your query: ")

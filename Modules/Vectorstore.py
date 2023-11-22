@@ -55,6 +55,7 @@ def LoadVectorstore(embeddings):
     persist_directory = "db" #If changed, issues while loading -> stick to default "db"
     
     vectorstore = Chroma(persist_directory=persist_directory, embedding_function=embeddings, collection_name=input("Specify database name to load: "))
+    
     logger.info("Vectorstore loaded successfully!\n")
     return vectorstore
 

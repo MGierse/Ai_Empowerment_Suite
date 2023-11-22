@@ -2,16 +2,41 @@ import logging
 import ConsoleInterface
 
 import langchain.schema
-from langchain.agents import initialize_agent, create_pandas_dataframe_agent, AgentType
+from langchain.agents import initialize_agent, AgentType #create_pandas_dataframe_agent
+
+
+
 
 logger = logging.getLogger('ConsoleInterface')
 
+'''
 def PandasDataframeAgent(llm, Dataframe):
+    """
+    Create a PandasDataframeAgent object.
+
+    Parameters:
+    llm (str): The llm parameter.
+    Dataframe (pandas.DataFrame): The DataFrame parameter.
+
+    Returns:
+    PandasDataframeAgent: The created PandasDataframeAgent object.
+    """
     PandasDataframeAgent = create_pandas_dataframe_agent(llm, df=Dataframe, verbose=True)
 
     return PandasDataframeAgent
-    
+'''    
 def RunConversationalAgent(llm, Tools, Memory):
+    """
+    Run the conversational agent.
+
+    Args:
+        llm: The language model used by the agent.
+        Tools: The tools available to the agent.
+        Memory: The memory used by the agent.
+
+    Returns:
+        None
+    """
 
     initialize_agent
     Agent = initialize_agent(agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION, llm=llm, tools=Tools, memory=Memory, verbose=True)

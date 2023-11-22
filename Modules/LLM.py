@@ -11,9 +11,11 @@ def getKUKA_LLM():
     load_dotenv()
     
     llm = AzureChatOpenAI (
-        openai_api_base=os.getenv("OPENAI_API_BASE_AZURE"),
+        #openai_api_base=os.getenv("OPENAI_API_BASE_AZURE"),
+        azure_endpoint=os.getenv("OPENAI_API_BASE_AZURE"),
         openai_api_version="2023-07-01-preview",
-        deployment_name=os.getenv("DEPLOYMENT_NAME_AZURE"), 
+        #deployment_name=os.getenv("DEPLOYMENT_NAME_AZURE"), 
+        azure_deployment=os.getenv("DEPLOYMENT_NAME_AZURE"), 
         openai_api_key=os.getenv("OPENAI_API_KEY_AZURE"),
         openai_api_type = "azure",
         temperature=0

@@ -1,12 +1,12 @@
 import os
 from langchain.embeddings.openai import OpenAIEmbeddings
 
-def AzureOpenAIEmbeddings(deployment_name: str):
+def AzureOpenAIEmbeddings(azure_deployment: str):
     AzureOpenAIEmbeddings = OpenAIEmbeddings()
 
     AzureOpenAIEmbeddings.openai_api_base = os.getenv("OPENAI_API_BASE_AZURE")
     AzureOpenAIEmbeddings.openai_api_version = "2023-07-01-preview" #"2023-03-15-preview"
-    AzureOpenAIEmbeddings.deployment = deployment_name
+    AzureOpenAIEmbeddings.deployment = azure_deployment
     AzureOpenAIEmbeddings.openai_api_version = "2023-07-01-preview" #"2023-03-15-preview"
     AzureOpenAIEmbeddings.openai_api_type = "azure"
     AzureOpenAIEmbeddings.openai_api_key = os.getenv("OPENAI_API_KEY_AZURE")

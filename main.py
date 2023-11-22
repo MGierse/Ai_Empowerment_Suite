@@ -6,8 +6,9 @@ import ConsoleInterface
 
 #Import external modules
 from Modules.Tools import GetTools
-import DataAnalysis as dA
+#import DataAnalysis as dA
 from Modules.Agents import RunConversationalAgent
+from Modules.Chains import run_conversationalretrieval_chain
 
 from Modules.Memory import getConversationBufferMemory
 from Modules.Vectorstore import LoadVectorstore
@@ -42,14 +43,35 @@ logo = r"""
 logger.info(logo)
 
 #Generally required
-embeddings = AzureOpenAIEmbeddings(deployment_name="kuka-text-embedding-ada-002")
+embeddings = AzureOpenAIEmbeddings(azure_deployment="kuka-text-embedding-ada-002")
 
-def FirstModularTest ():
+def FirstModularTest():
+    """
+    This function performs the first modular test.
+
+    It initializes the necessary components, such as the KUKA LLM, vectorstore,
+    conversation buffer memory, and tools. Then, it runs the conversational agent.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+    """
     llm = getKUKA_LLM()
     vectorstore = LoadVectorstore(embeddings=embeddings)    
     memory = getConversationBufferMemory(memory_key="chat_history")
     Tools = GetTools(selected_tool_names=['Knowledge Base'], llm=llm, vectorstore=vectorstore)
     RunConversationalAgent(llm=llm, Tools=Tools, Memory=memory)
+
+
+def SecondModularTest():
+    llm = getKUKA_LLM()
+    vectorstore = LoadVectorstore(embeddings=embeddings)    
+    memory = getConversationBufferMemory(memory_key="chat_history")
+
+    run_conversationalretrieval_chain(vectorstore=vectorstore, llm=llm, memory=memory)
+
 
 if __name__ == "__main__":
 
@@ -73,7 +95,8 @@ if __name__ == "__main__":
             #CreateVectorStore()
             CreateVectorstore(embeddings=embeddings)
         elif choice == "2":
-            dA.RunExcelQuery()
+            SecondModularTest()
+            #dA.RunExcelQuery()
         elif choice == "3":
             FirstModularTest()
             #LoadVectorStore()
